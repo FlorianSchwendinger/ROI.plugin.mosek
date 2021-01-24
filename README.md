@@ -18,6 +18,6 @@ install.packages("ROI.plugin.mosek", repos="http://R-Forge.R-project.org")
 ## or (recommended version)
 remotes:::install_svn("svn://svn.r-forge.r-project.org/svnroot/roi/pkg/ROI.plugin.mosek")
 ## or
-remotes:::install_github("FlorianSchwendinger/ROI.plugin.mosek")
+remotes:::install_github("FlorianSchwendinger/ROI.plugin.mosek", INSTALL_opts = "--no-multiarch")
 ```
 to install `ROI.plugin.mosek`.
