@@ -122,8 +122,8 @@ solve_OP <- function(x, control = list()) {
       m$A <- as_dgCMatrix(constr$L[b,])
       m$bc <- rbind(rep.int(-Inf, nrow(m$A)),
                     constr$rhs[b])
-      zero_b = constr$cones$cone == mosek_cones["zero"]
-      if ( any(zero_b) ) m$bc[1,which(zero_b)] = constr$rhs[zero_b] 
+      j = constr$cones$cone[b] == mosek_cones["zero"]
+      if ( any(j) ) m$bc[1, j] = (constr$rhs[b])[j] 
     } 
 
     if ( any(!b) ) {
