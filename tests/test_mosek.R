@@ -329,6 +329,64 @@ test_cp_06 <- function(solver) {
 }
 
 
+## POWP - Example - 1
+## max:  x + y + z
+## s.t.
+##      x^a * y ^ (1-a) >= |z|
+##      x == 4
+##      y == 4
+##      a == 1/2
+##
+## c(4, 4, 4)
+test_cp_07 <- function(solver) {
+    obj <- c(1, 1, 1)
+    A <- rbind(c(1, 0, 0),
+               c(0, 1, 0))
+    b <- c(4, 4)
+    G <- diag(x=-1, 3)
+    h <- rep(0, 3)
+
+    cc <- C_constraint(L = rbind(A, G), 
+                       cones = c(K_zero(2), K_powp(0.5)), 
+                       rhs = c(b, h))
+    x <- OP(objective = obj, constraints = cc, 
+            types = rep("C", 3), maximum = TRUE)
+
+    opt <- ROI_solve(x, solver=solver)
+    check("CP-07@01", equal(opt$solution, c(4, 4, 4)))
+    check("CP-07@02", equal(opt$objval, 12 ))
+}
+
+## POWD - Example - 1
+## min:  u + v + w
+## s.t.
+##      (u/a)^a * ( v/(1-a) )^(1-a) >= |w|
+##      u == 2
+##      v == 2
+##      a == 1/2
+##
+## c(2, 2, 4)
+test_cp_08 <- function(solver) {
+    obj <- c(1, 1, 1)
+    A <- rbind(c(1, 0, 0),
+               c(0, 1, 0))
+    b <- c(2, 2)
+    G <- diag(x=-1, 3)
+    h <- rep(0, 3)
+    ## cones <- list("free"=c(1, 2), "powd"=list(list(i=3:5, a=0.5)))
+    ## bound <- as.C_bound(cones)
+
+    lc <- C_constraint(L = rbind(A, G), 
+                       cones = c(K_zero(2), K_powd(0.5)), 
+                       rhs = c(b, h))
+    x <- OP(objective = obj, constraints = lc, 
+            types = rep("C", 3), maximum = TRUE)
+
+    opt <- ROI_solve(x, solver=solver)
+    check("CP-08@01", equal(opt$solution, c(2, 2, 4)))
+}
+
+
 if ( !any("mosek" %in% names(ROI_registered_solvers())) ) {
     ## This should never happen.
     cat("ROI.plugin.mosek cloud not be found among the registered solvers.\n")
@@ -347,5 +405,7 @@ if ( !any("mosek" %in% names(ROI_registered_solvers())) ) {
     local({test_cp_04("mosek")})
     local({test_cp_05("mosek")})
     local({test_cp_06("mosek")})
+    local({test_cp_07("mosek")})
+    local({test_cp_08("mosek")})
 }
 

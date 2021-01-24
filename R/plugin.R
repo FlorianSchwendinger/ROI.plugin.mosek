@@ -64,28 +64,34 @@ is.LP <- function(x) {
 .control_args  <- c("verbose", "usesol", "useparam", "soldetail", "getinfo", "scofile")
 .control_types <- c("numeric", "logical", "logical", "numeric",   "logical", "character")
 
-mosek_cones <- c("zero" = 1L, "nonneg" = 2L, "soc" = 3L, "expp" = 5L, "expd" = 6L) #, "DEXP" = 6L, "PPOW" = 7L, "DPOW" = 8L)
+mosek_cones <- c("zero" = 1L, "nonneg" = 2L, "soc" = 3L, "expp" = 5L, "expd" = 6L, "powp" = 7L, "powd" = 8L)
 
 calc_exp_dims <- function(x, exp) {
     y <- x$id[x$cone == mosek_cones[exp]]
-    if ( !length(y) )
-        return(NULL)
+    if ( !length(y) ) return(NULL)
     length(unique(y))
+}
+
+calc_pow_dims <- function(x, pow) {
+    ids <- unique(x$id[x$cone == mosek_cones[pow]])
+    if ( !length(ids) ) return(NULL)
+    ans <- sapply(as.character(ids), function(id) x$params[[id]]['a'], USE.NAMES = FALSE)
+    unname(ans) 
 }
 
 calc_soc_dims <- function(x) {
     y <- x$id[x$cone == mosek_cones["soc"]]
-    if ( !length(y) )
-        return(NULL)
+    if ( !length(y) ) return(NULL)
     as.integer(table(y))
 }
 
 calc_dims <- function(cones) {
   dims <- list()
+  dims$q <- calc_soc_dims(cones)
   dims$ep <- calc_exp_dims(cones, "expp")
   dims$ed <- calc_exp_dims(cones, "expd")
-  dims$q <- calc_soc_dims(cones)
-
+  dims$pp <- calc_pow_dims(cones, "powp")
+  dims$pd <- calc_pow_dims(cones, "powd")
   dims
 }
 
@@ -130,6 +136,12 @@ solve_OP <- function(x, control = list()) {
       m$F <- as_dgCMatrix(-constr$L[!b,])
       m$g <- constr$rhs[!b]
       cones <- constr$cones[!b]
+
+      ## We order the cones here to ensure that the matrix
+      ## for the cones (which we build later) have the same order.
+      i <- with(cones, order(cone, id))
+      cones <- cones[i]
+
       dims <- calc_dims(cones)
 
       ## Since mosek uses a different cone definition we have to 
@@ -150,25 +162,30 @@ solve_OP <- function(x, control = list()) {
       m$F <- m$F[i,]
       m$g <- m$g[i]
 
-      ep <- NULL
-      ed <- NULL
-      qc <- NULL
+      cone_list <- list()
 
-      if ( !is.null(dims$ep) )
-        ep <- matrix(list("PEXP", 3, NULL), nrow = 3, ncol = dims$ep)
-      if ( !is.null(dims$ed) )
-        ed <- matrix(list("DEXP", 3, NULL), nrow = 3, ncol = dims$ed)
       if ( !is.null(dims$q) ) {
-        qc <- matrix(list(), nrow = 3, ncol = length(dims$q))
-        qc[1,] <- "QUAD"
-        qc[2,] <- dims$q
+        cone_list$q <- matrix(list(), nrow = 3, ncol = length(dims$q))
+        cone_list$q[1,] <- "QUAD"
+        cone_list$q[2,] <- dims$q
+      }
+      if ( !is.null(dims$ep) )
+        cone_list$ep <- matrix(list("PEXP", 3, NULL), nrow = 3, ncol = dims$ep)
+      if ( !is.null(dims$ed) )
+        cone_list$ed <- matrix(list("DEXP", 3, NULL), nrow = 3, ncol = dims$ed)
+      if ( !is.null(dims$pp) ) {
+        cone_list$pp <- matrix(list("PPOW", 3, NULL), nrow = 3, ncol = length(dims$pp))
+        cone_list$pp[3,] <- lapply(dims$pp, function(a) c(a,1-a))
+      }
+      if ( !is.null(dims$pd) ) {
+        cone_list$pd <- matrix(list("DPOW", 3, NULL), nrow = 3, ncol = length(dims$pd))
+        cone_list$pd[3,] <- lapply(dims$pd, function(a) c(a,1-a))
       }
 
-      m$cones <- do.call(cbind, list(ep, ed, qc))
-      rownames(m$cones) <- c("type","dim","conepar")
+      m$cones <- do.call(cbind, cone_list)
+      rownames(m$cones) <- c("type", "dim", "conepar")
     }
   }
-
 
   ## bounds
   m$bx <- V_bound_2_matrix(bounds(x), leno)

@@ -6,7 +6,7 @@ make_MIQCP_signatures <- function()
                                constraints = c("X", "L", "C"),## "Q",
                                types = c("C", "I", "B", "CI", "CB", "IB", "CIB"),
                                bounds = c("X", "V"),
-                               cones = c("X", "zero", "nonneg", "soc", "expp", "expd"),
+                               cones = c("X", "zero", "nonneg", "soc", "expp", "expd", "powp", "powd"),
                                maximum = c(TRUE, FALSE) )
 
 ## SOLVER CONTROLS
