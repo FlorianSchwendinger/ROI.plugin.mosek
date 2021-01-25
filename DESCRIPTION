@@ -1,9 +1,9 @@
 Package: ROI.plugin.mosek
-Version: 0.3-0
+Version: 0.4-0
 Title: 'Mosek' Plug-in for the 'R' Optimization Infrastructure
 Authors@R: c(
-    person("Florian", "Schwendinger", role = c("aut", "cre"), email = "FlorianSchwendinger@gmx.at"),
-    person("Benjamin", "Schwendinger", role = "ctb"))
+	person("Benjamin", "Schwendinger", role = c("aut","cre"), email = "benjaminschwe@gmail.com"),
+    person("Florian", "Schwendinger", role = c("aut"), email = "FlorianSchwendinger@gmx.at"))
 Description: Enhances the R Optimization Infrastructure ('ROI') package
 	     with the 'Mosek' solver. This package was built and tested
          with 'Rmosek_9.2.3'. More information about the system requirements 

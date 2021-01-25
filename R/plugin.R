@@ -66,6 +66,18 @@ is.LP <- function(x) {
 
 mosek_cones <- c("zero" = 1L, "nonneg" = 2L, "soc" = 3L, "expp" = 5L, "expd" = 6L, "powp" = 7L, "powd" = 8L)
 
+calc_zero_dims <- function(x) {
+    y <- x$id[x$cone == mosek_cones["zero"]]
+    if ( !length(y) ) return(NULL)
+    as.integer(table(y))
+}
+
+calc_soc_dims <- function(x) {
+    y <- x$id[x$cone == mosek_cones["soc"]]
+    if ( !length(y) ) return(NULL)
+    as.integer(table(y))
+}
+
 calc_exp_dims <- function(x, exp) {
     y <- x$id[x$cone == mosek_cones[exp]]
     if ( !length(y) ) return(NULL)
@@ -79,14 +91,9 @@ calc_pow_dims <- function(x, pow) {
     unname(ans) 
 }
 
-calc_soc_dims <- function(x) {
-    y <- x$id[x$cone == mosek_cones["soc"]]
-    if ( !length(y) ) return(NULL)
-    as.integer(table(y))
-}
-
 calc_dims <- function(cones) {
   dims <- list()
+  dims$z <- calc_zero_dims(cones)
   dims$q <- calc_soc_dims(cones)
   dims$ep <- calc_exp_dims(cones, "expp")
   dims$ed <- calc_exp_dims(cones, "expd")
@@ -123,26 +130,18 @@ solve_OP <- function(x, control = list()) {
   m$bc <- rbind(-Inf, Inf)
 
   if ( nrow(constr) ) {
-    b <- constr$cones$cone %in% mosek_cones[c("zero", "nonneg")]
+    b <- constr$cones$cone %in% mosek_cones[c("nonneg")]
     if ( any(b) ) {
       m$A <- as_dgCMatrix(constr$L[b,])
       m$bc <- rbind(rep.int(-Inf, nrow(m$A)),
                     constr$rhs[b])
-      j = constr$cones$cone[b] == mosek_cones["zero"]
-      if ( any(j) ) m$bc[1, j] = (constr$rhs[b])[j] 
     } 
 
     if ( any(!b) ) {
       m$F <- as_dgCMatrix(-constr$L[!b,])
       m$g <- constr$rhs[!b]
+      dims <- calc_dims(constr$cones)
       cones <- constr$cones[!b]
-
-      ## We order the cones here to ensure that the matrix
-      ## for the cones (which we build later) have the same order.
-      i <- with(cones, order(cone, id))
-      cones <- cones[i]
-
-      dims <- calc_dims(cones)
 
       ## Since mosek uses a different cone definition we have to 
       ## permutate the cones.
@@ -163,6 +162,12 @@ solve_OP <- function(x, control = list()) {
       m$g <- m$g[i]
 
       cone_list <- list()
+
+      if ( !is.null(dims$z) ) {
+        cone_list$z <- matrix(list(), nrow = 3, ncol = length(dims$z))
+        cone_list$z[1,] <- "ZERO"
+        cone_list$z[2,] <- dims$z
+      }
 
       if ( !is.null(dims$q) ) {
         cone_list$q <- matrix(list(), nrow = 3, ncol = length(dims$q))

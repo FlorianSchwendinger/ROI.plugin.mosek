@@ -1,5 +1,3 @@
-# !!!Under Development!!!
-
 # Installation
 Before `ROI.plugin.mosek` can be installed `mosek` and its corresponding 
 **R** package `Rmosek` need to be installed. Both can be obtained from
@@ -8,7 +6,7 @@ and more information about the installation can be found in the `Rmosek` documen
 [https://docs.mosek.com/9.2/rmosek/install-interface.html](https://docs.mosek.com/9.2/rmosek/install-interface.html).    
 
 
-`ROI.plugin.mosek` was tested on `Debian GNU/Linux 10` with the
+`ROI.plugin.mosek` was tested on `Debian GNU/Linux 10` and `Windows 10` with the
 `mosek` version `9.2`.      
 
 
