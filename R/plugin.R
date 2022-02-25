@@ -102,8 +102,37 @@ calc_dims <- function(cones) {
   dims
 }
 
+
+#' Control Arguments
+#'
+#' The following basic information on the arguments, for more information
+#' we refer to the mosek manual.
+#'
+#' @param verbose a numeric giving the logging verbosity.
+#' @param usesol a logical giving whether the initial solution should be used.
+#' @param useparam a logical giving whether the specified parameter settings should be used.
+#' @param soldetail a numeric controling the level of detail used to describe the solutions.
+#' @param getinfo  a logical giving whether additional info should be returned.
+#' @param writebefore a character string giving the file path used to export model.
+#' @param writeafter a character string giving the file path used to export model and solution.
+#' @examples
+#' mosek_control()
+#' @export
+mosek_control <- function(
+  verbose = 0,
+  usesol = logical(),
+  useparam = logical(),
+  soldetail = numeric(),
+  getinfo = TRUE,
+  writebefore = character(),
+  writeafter = character()) {
+  cntrl <- as.list(environment())
+  cntrl[lengths(cntrl) > 0L]
+}
+
+
 ##
-solve_OP <- function(x, control = list()) {
+solve_OP <- function(x, control = mosek_control()) {
   solver <- "mosek"
 
   constr <- as.C_constraint(constraints(x))
@@ -158,7 +187,7 @@ solve_OP <- function(x, control = list()) {
       }
       i <- with(cones, order(cone, id))
 
-      m$F <- m$F[i,]
+      m$F <- m$F[i,, drop = FALSE]
       m$g <- m$g[i]
 
       cone_list <- list()
@@ -201,23 +230,20 @@ solve_OP <- function(x, control = list()) {
     m$intsub <- i
     ## binary are defined as integer and 0 <= x <= 1
     i <- which(types(x) == "B")
-    if ( length(i) ) {
+    if ( length(i) > 0L ) {
       m$bx[1, i] <- sapply(m$bx[1, i], max, 0)
       m$bx[2, i] <- sapply(m$bx[2, i], min, 1)
     }
-  } 
+  }
 
-  ## control
-  control$verbose <- if (length(control$verbose)) control$verbose else 0L
-
-  ## tmp <- Rmosek:::mosek(problem=m, 
+  ## tmp <- Rmosek:::mosek(problem=m,
   ##                       opts=control[intersect(names(control), .control_args)])
   ## str(tmp)
 
-  m_call <- list(Rmosek::mosek, problem=m, 
+  m_call <- list(Rmosek::mosek, problem = m,
            opts = control[intersect(names(control), .control_args)])
   mode(m_call) <- "call"
-  if ( isTRUE(control$dry_run) )
+  if (isTRUE(control$dry_run))
     return(m_call)
 
   out <- eval(m_call)
@@ -234,13 +260,13 @@ solve_OP <- function(x, control = list()) {
     x.solution <- out$sol$int$xx
   }
 
-  optimum <- tryCatch({as.numeric(objective(x)(x.solution))}, 
-            error=function(e) as.numeric(NA))
+  optimum <- tryCatch({as.numeric(objective(x)(x.solution))},
+                      error = function(e) as.numeric(NA))
 
-  return( ROI_plugin_canonicalize_solution( solution = x.solution, 
-                         optimum  = optimum,
-                         status   = as.integer(out$response$code),
-                         solver   = "mosek", 
-                         message  = out ) 
-  )
+  return(ROI_plugin_canonicalize_solution(
+          solution = x.solution,
+          optimum  = optimum,
+          status   = as.integer(out$response$code),
+          solver   = "mosek",
+          message  = out))
 }
