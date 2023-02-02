@@ -11,22 +11,12 @@
                                        "No error occurred.",
                                        0L )
 
-    ROI_plugin_add_status_code_to_db( solver, 10030L, "MSK_RES_TRM_INTERNAL", "The optimizer terminated due to some internal reason. Please contact MOSEK support.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10031L, "MSK_RES_TRM_INTERNAL_STOP", "The optimizer terminated for internal reasons. Please contact MOSEK support.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10000L, "MSK_RES_TRM_MAX_ITERATIONS", "The optimizer terminated at the maximum number of iterations.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10020L, "MSK_RES_TRM_MAX_NUM_SETBACKS", "The optimizer terminated as the maximum number of set-backs was reached. This indicates %
-serious numerical problems and a possibly badly formulated problem.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10001L, "MSK_RES_TRM_MAX_TIME", "The optimizer terminated at the maximum amount of time.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10004L, "MSK_RES_TRM_MIO_NEAR_ABS_GAP", "The mixed-integer optimizer terminated because the near optimal absolute gap tolerance was sat-
-isfied.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10003L, "MSK_RES_TRM_MIO_NEAR_REL_GAP", "The mixed-integer optimizer terminated because the near optimal relative gap tolerance was sat-
-isfied.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10009L, "MSK_RES_TRM_MIO_NUM_BRANCHES", "The mixed-integer optimizer terminated as to the maximum number of branches was reached.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10008L, "MSK_RES_TRM_MIO_NUM_RELAXS", "The mixed-integer optimizer terminated as the maximum number of relaxations was reached.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10015L, "MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS", "The mixed-integer optimizer terminated as the maximum number of feasible solutions was reached.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10025L, "MSK_RES_TRM_NUMERICAL_PROBLEM", "The optimizer terminated due to numerical problems.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10002L, "MSK_RES_TRM_OBJECTIVE_RANGE", "The optimizer terminated on the bound of the objective range.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10006L, "MSK_RES_TRM_STALL", "The optimizer is terminated due to slow progress.
+    ROI_plugin_add_status_code_to_db( solver, 100000L, "MSK_RES_TRM_MAX_ITERATIONS", "The optimizer terminated at the maximum number of iterations.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100001L, "MSK_RES_TRM_MAX_TIME", "The optimizer terminated at the maximum amount of time.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100002L, "MSK_RES_TRM_OBJECTIVE_RANGE", "The optimizer terminated on the bound of the objective range.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100003L, "MSK_RES_TRM_MIO_NEAR_REL_GAP", "The mixed-integer optimizer terminated because the near optimal relative gap tolerance was satisfied.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100004L, "MSK_RES_TRM_MIO_NEAR_ABS_GAP", "The mixed-integer optimizer terminated because the near optimal absolute gap tolerance was satisfied.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100006L, "MSK_RES_TRM_STALL", "The optimizer is terminated due to slow progress.
 Stalling means that numerical problems prevent the optimizer from making reasonable progress
 and that it make no sense to continue. In many cases this happens if the problem is badly scaled
 or otherwise ill-conditioned. There is no guarantee that the solution will be (near) feasible or near
@@ -41,8 +31,15 @@ problems and c) a non-convex problems. Case c) is only relevant for general non-
 It is not possible in general for MOSEK to check if a specific problems is convex since such a
 check would be NP hard in itself. This implies that care should be taken when solving problems
 involving general user defined functions.", 1L)
-    ROI_plugin_add_status_code_to_db( solver, 10007L, "MSK_RES_TRM_USER_CALLBACK", "The optimizer terminated due to the return of the user-defined call-back function.", 1L)
-
+    ROI_plugin_add_status_code_to_db( solver, 100007L, "MSK_RES_TRM_USER_CALLBACK", "The optimizer terminated due to the return of the user-defined call-back function.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100008L, "MSK_RES_TRM_MIO_NUM_RELAXS", "The mixed-integer optimizer terminated as the maximum number of relaxations was reached.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100009L, "MSK_RES_TRM_MIO_NUM_BRANCHES", "The mixed-integer optimizer terminated as to the maximum number of branches was reached.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100015L, "MSK_RES_TRM_NUM_MAX_NUM_INT_SOLUTIONS", "The mixed-integer optimizer terminated as the maximum number of feasible solutions was reached.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100020L, "MSK_RES_TRM_MAX_NUM_SETBACKS", "The optimizer terminated as the maximum number of set-backs was reached. This indicates % serious numerical problems and a possibly badly formulated problem.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100025L, "MSK_RES_TRM_NUMERICAL_PROBLEM", "The optimizer terminated due to numerical problems.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100027L, "MSK_RES_TRM_LOST_RACE", "The optimizer terminated due to numerical problems.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100030L, "MSK_RES_TRM_INTERNAL", "The optimizer terminated due to some internal reason. Please contact MOSEK support.", 1L)
+    ROI_plugin_add_status_code_to_db( solver, 100031L, "MSK_RES_TRM_INTERNAL_STOP", "The optimizer terminated for internal reasons. Please contact MOSEK support.", 1L)
     ##' ----------------------
     ##' Warning - Codes
     ##' ----------------------
