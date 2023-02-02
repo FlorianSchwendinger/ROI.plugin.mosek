@@ -239,6 +239,7 @@ solve_OP <- function(x, control = mosek_control()) {
   ## tmp <- Rmosek:::mosek(problem=m,
   ##                       opts=control[intersect(names(control), .control_args)])
   ## str(tmp)
+  m$dparam <- list(MIO_TOL_REL_GAP = 1e-9)
 
   m_call <- list(Rmosek::mosek, problem = m,
            opts = control[intersect(names(control), .control_args)])

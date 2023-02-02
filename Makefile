@@ -15,7 +15,7 @@ some:
 
 .PHONY: clean
 clean:
-	$(RM) ROI.plugin.mosek_0.5-0.tar.gz
+	$(RM) ROI.plugin.mosek_0.5-2.tar.gz
 
 .PHONY: build
 build:
@@ -23,7 +23,7 @@ build:
 
 .PHONY: install
 install:
-	$(R) CMD INSTALL ROI.plugin.mosek_0.5-0.tar.gz --no-multiarch
+	$(R) CMD INSTALL ROI.plugin.mosek_0.5-2.tar.gz --no-multiarch
 
 .PHONY: uninstall
 uninstall:
@@ -31,4 +31,4 @@ uninstall:
 
 .PHONY: check
 check:
-	$(R) CMD check ROI.plugin.mosek_0.5-0.tar.gz --as-cran --no-multiarch --no-manual --no-build-vignettes
+	$(R) CMD check ROI.plugin.mosek_0.5-2.tar.gz --as-cran --no-multiarch --no-manual --no-build-vignettes
