@@ -125,7 +125,8 @@ mosek_control <- function(
   soldetail = numeric(),
   getinfo = TRUE,
   writebefore = character(),
-  writeafter = character()) {
+  writeafter = character()
+  ) {
   cntrl <- as.list(environment())
   cntrl[lengths(cntrl) > 0L]
 }
@@ -238,8 +239,17 @@ solve_OP <- function(x, control = mosek_control()) {
 
   ## tmp <- Rmosek:::mosek(problem=m,
   ##                       opts=control[intersect(names(control), .control_args)])
-  ## str(tmp)
-  m$dparam <- list(MIO_TOL_REL_GAP = 1e-9)
+  if ("Threads" %in% names(control)) {
+    m$iparam$NUM_THREADS <- control$Threads
+  }
+  if ("MIPGapRel" %in% names(control)) {
+    m$dparam$MIO_TOL_REL_GAP <- control$MIPGapRel
+  }
+  if ("MIPGapAbs" %in% names(control)) {
+    m$dparam$MIO_TOL_ABS_GAP <- control$MIPGapAbs
+  }
+  #m$dparam <- list(MIO_TOL_REL_GAP = 1e-9)
+  #m$iparam <- list(NUM_THREADS = 1)
 
   m_call <- list(Rmosek::mosek, problem = m,
            opts = control[intersect(names(control), .control_args)])

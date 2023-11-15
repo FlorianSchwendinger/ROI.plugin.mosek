@@ -12,15 +12,18 @@ make_MIQCP_signatures <- function()
 ## SOLVER CONTROLS
 .add_controls <- function(solver) {
     ## mosek
-    ROI_plugin_register_solver_control( solver, "dry_run", "X" )
+    ROI_plugin_register_solver_control(solver, "dry_run", "X" )
 
-    ROI_plugin_register_solver_control( solver, "verbose", "verbose" )
+    ROI_plugin_register_solver_control(solver, "verbose", "verbose")
 
-    ROI_plugin_register_solver_control( solver, "usesol", "X" )
-    ROI_plugin_register_solver_control( solver, "useparam", "X" )
-    ROI_plugin_register_solver_control( solver, "soldetail", "X" )
-    ROI_plugin_register_solver_control( solver, "getinfo", "X" )
-    ROI_plugin_register_solver_control( solver, "scofile", "X" )
+    ROI_plugin_register_solver_control(solver, "usesol",    "X")
+    ROI_plugin_register_solver_control(solver, "useparam",  "X")
+    ROI_plugin_register_solver_control(solver, "soldetail", "X")
+    ROI_plugin_register_solver_control(solver, "getinfo",   "X")
+    ROI_plugin_register_solver_control(solver, "scofile",   "X")
+    ROI_plugin_register_solver_control(solver, "Threads",   "X") # Number of parallel threads to use
+    ROI_plugin_register_solver_control(solver, "MIPGapRel", "X") # Relative MIP optimality gap
+    ROI_plugin_register_solver_control(solver, "MIPGapAbs", "X") # Absolute MIP optimality gap
 
     invisible( TRUE )
 }
