@@ -24,7 +24,8 @@ make_MIQCP_signatures <- function()
     ROI_plugin_register_solver_control(solver, "Threads",   "X") # Number of parallel threads to use
     ROI_plugin_register_solver_control(solver, "MIPGapRel", "X") # Relative MIP optimality gap
     ROI_plugin_register_solver_control(solver, "MIPGapAbs", "X") # Absolute MIP optimality gap
-
+    ROI_plugin_register_solver_control(solver, "LowerObjCut", "X")
+    ROI_plugin_register_solver_control(solver, "UpperObjCut", "X")
     invisible( TRUE )
 }
 

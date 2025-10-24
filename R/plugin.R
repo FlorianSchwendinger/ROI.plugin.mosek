@@ -248,6 +248,12 @@ solve_OP <- function(x, control = mosek_control()) {
   if ("MIPGapAbs" %in% names(control)) {
     m$dparam$MIO_TOL_ABS_GAP <- control$MIPGapAbs
   }
+  if ("LowerObjCut" %in% names(control)) {
+    m$dparam$LOWER_OBJ_CUT <- control$LowerObjCut
+  }
+  if ("UpperObjCut" %in% names(control)) {
+    m$dparam$UPPER_OBJ_CUT <- control$UpperObjCut
+  }
   #m$dparam <- list(MIO_TOL_REL_GAP = 1e-9)
   #m$iparam <- list(NUM_THREADS = 1)
 
